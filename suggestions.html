@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#1b0f38" />
-  <meta name="description" content="Campaign videos and clips from the Lincoln High Student Council." />
-  <title>Videos - Student Council</title>
+  <meta name="description" content="Send a suggestion to the Lincoln High Student Council." />
+  <title>Suggestions - Student Council</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -338,81 +338,38 @@ h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 1
       <nav aria-label="Main">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a href="videos.html" aria-current="page">Videos</a>
-        <a href="suggestions.html">Suggestions</a>
+        <a href="videos.html">Videos</a>
+        <a href="suggestions.html" aria-current="page">Suggestions</a>
       </nav>
     </div>
   </header>
 
   <main class="wrap page">
-    <h1>Videos</h1>
-    <p class="lead">Recaps, announcements, and behind-the-scenes clips from student council.</p>
+    <h1>Got an idea?</h1>
+    <p class="lead">Suggestions go straight to the council. Leave your name if you want a reply, or stay anonymous.</p>
 
-    <!--
-      TO ADD A NEW VIDEO:
-      1. Upload your video to YouTube (Unlisted is fine if you don't want it public-searchable).
-      2. Copy the ID from the URL: youtube.com/watch?v=THIS_PART_HERE
-         (for a Short: youtube.com/shorts/THIS_PART_HERE)
-      3. Copy one of the <article class="card"> blocks below and paste in your ID + name + caption.
-    -->
+    <section class="card">
+      <form id="suggestion-form" class="form" action="https://formspree.io/f/xljdgdve" method="POST">
+        <label for="name">Name <span class="optional">(optional)</span></label>
+        <input type="text" id="name" name="name" autocomplete="name" />
 
-    <h2 class="section-title">Your president</h2>
-    <article class="card video-card-lead">
-      <div class="video-embed">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/cI_hA2c1CnU"
-            title="Shawnmichaels Rodriguez Calderon campaign video"
-            loading="lazy"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen>
-          </iframe>
-        </div>
-      <div class="video-meta">
-        <h3>Shawnmichaels Rodriguez Calderon</h3>
-        <span class="badge badge-gold"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4.5 4.5L12 4l4.5 7.5L21 7l-1.8 11H4.8L3 7zm1.8 13h14.4v1.8H4.8V20z"/></svg>Winner</span>
-      </div>
-      <p class="caption">not AI generated...probably</p>
-    </article>
+        <label for="topic">Topic <span class="optional">(optional)</span></label>
+        <input type="text" id="topic" name="topic" placeholder="Lunch, events, dress code…" />
 
-    <h2 class="section-title">Also on the ballot</h2>
-    <div class="video-duo">
-      <article class="card">
-        <div class="video-embed">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/xfb6v0_nYcI"
-            title="Nikki Anup campaign video"
-            loading="lazy"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-meta">
-          <h3>Nikki Anup</h3>
-          <span class="badge badge-soft">Candidate</span>
-        </div>
-        <p class="caption">the one from that one movie</p>
-      </article>
+        <label for="message">Your suggestion</label>
+        <textarea id="message" name="message" required></textarea>
 
-      <article class="card">
-        <div class="video-embed">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/k4Dy1qj3e4Q"
-            title="Jude Cain campaign video"
-            loading="lazy"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen>
-          </iframe>
+        <!-- Spam trap: real people never see or fill this in. -->
+        <div class="hp" aria-hidden="true">
+          <label for="gotcha">Leave this field empty</label>
+          <input type="text" id="gotcha" name="_gotcha" tabindex="-1" autocomplete="off" />
         </div>
-        <div class="video-meta">
-          <h3>Jude Cain</h3>
-          <span class="badge badge-soft">Candidate</span>
-        </div>
-        <p class="caption">absolute cinema</p>
-      </article>
-    </div>
+        <input type="hidden" name="_subject" value="New Student Council suggestion" />
+
+        <button class="btn btn-violet" type="submit">Send suggestion</button>
+      </form>
+      <div id="form-status" class="alert" role="status" aria-live="polite"></div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -420,5 +377,48 @@ h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 1
       <p>&copy; 2026 Student Council</p>
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var form = document.getElementById('suggestion-form');
+      var status = document.getElementById('form-status');
+      var button = form.querySelector('button[type="submit"]');
+      var label = button.textContent;
+
+      function show(kind, text) {
+        status.className = 'alert alert-' + kind;
+        status.textContent = text;
+      }
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        status.className = 'alert';
+        status.textContent = '';
+        button.disabled = true;
+        button.textContent = 'Sending…';
+
+        fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        })
+          .then(function (response) {
+            if (response.ok) {
+              form.reset();
+              show('success', 'Thanks! Your suggestion was sent to the council.');
+            } else {
+              show('error', "Your suggestion didn't send. Please try again in a moment.");
+            }
+          })
+          .catch(function () {
+            show('error', "Your suggestion didn't send. Check your connection and try again.");
+          })
+          .then(function () {
+            button.disabled = false;
+            button.textContent = label;
+          });
+      });
+    })();
+  </script>
 </body>
 </html>
